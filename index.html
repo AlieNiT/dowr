@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دور</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .category {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .category:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-5px);
+        }
+
+        .category.selected {
+            border-color: #4CAF50;
+            background: rgba(76,175,80,0.3);
+        }
+
+        .category h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .slider-container {
+            margin: 2rem 0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.3);
+            outline: none;
+            margin: 1rem 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        /* Circular arrangement for player inputs */
+        .circle-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 2rem auto;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .circle-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            z-index: 1;
+        }
+
+        .player-input {
+            position: absolute;
+            width: 120px;
+            padding: 0.8rem;
+            border: 2px solid;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+        
+        .player-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.3);
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+
+        .player-input::placeholder {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Settings screen styles */
+        .settings-container {
+            display: grid;
+            gap: 2rem;
+            margin: 2rem 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .setting-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .setting-label {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .time-input {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            width: 120px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .time-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.3);
+            border-color: #4CAF50;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .difficulty-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .difficulty-btn.selected {
+            border-color: #4CAF50;
+            background: rgba(76,175,80,0.3);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .timers {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .team-timer {
+            flex: 1;
+            min-width: 200px;
+            margin: 0.5rem;
+        }
+
+        .team-name {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .timer-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .timer-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .game-area {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            border: 3px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .current-word {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 2rem 0;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .word-difficulty {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.5rem;
+        }
+
+        .current-player {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .game-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .word-btn {
+            background: linear-gradient(45deg, #FF6B6B, #FF8E53);
+            font-size: 1.3rem;
+            padding: 1.2rem 2.5rem;
+        }
+
+        .skip-btn {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+        }
+
+        .skip-btn:disabled {
+            background: linear-gradient(45deg, #ccc, #999);
+            opacity: 0.5;
+        }
+
+        .eliminated {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+
+        .winner {
+            font-size: 4rem;
+            color: #FFD700;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .game-start {
+            font-size: 2rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .current-word {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .timers {
+                flex-direction: column;
+            }
+
+            .circle-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .player-input {
+                width: 100px;
+                font-size: 0.9rem;
+                padding: 0.6rem;
+            }
+
+            .difficulty-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <!-- صفحه انتخاب دسته‌بندی -->
+    <div id="categoryScreen" class="screen active">
+      <h1>🎯 بازی حدس کلمه</h1>
+      <h2>دسته‌بندی‌ها را انتخاب کنید</h2>
+      <div class="categories">
+        <div class="category" data-category="animals">
+          <h3>🐾 حیوانات</h3>
+          <p>شیر، فیل، دلفین...</p>
+        </div>
+        <div class="category" data-category="celebrities">
+          <h3>⭐ افراد معروف</h3>
+          <p>افراد معروف سینما، موسیقی...</p>
+        </div>
+        <div class="category" data-category="objects">
+          <h3>📦 اشیاء</h3>
+          <p>وسایل روزمره و چیزها...</p>
+        </div>
+        <div class="category" data-category="movies">
+          <h3>🎬 فیلم‌ها</h3>
+          <p>فیلم‌ها و برنامه‌های مشهور...</p>
+        </div>
+        <div class="category" data-category="food">
+          <h3>🍕 خوراکی‌ها</h3>
+          <p>غذاها، مواد غذایی، نوشیدنی‌ها...</p>
+        </div>
+        <div class="category" data-category="countries">
+          <h3>🌍 کشورها</h3>
+          <p>کشورهای جهان...</p>
+        </div>
+      </div>
+      <button class="btn" id="nextToPlayers" disabled>بعدی: وارد کردن بازیکنان</button>
+    </div>
+
+    <!-- صفحه تنظیم بازیکنان -->
+    <div id="playerScreen" class="screen">
+      <h1>👥 وارد کردن بازیکنان</h1>
+      <div class="slider-container">
+        <h2>تعداد بازیکنان: <span id="playerCount">4</span></h2>
+        <input type="range" min="4" max="10" step="2" value="4" class="slider" id="playerSlider">
+      </div>
+      <div class="circle-container" id="circleContainer">
+        <div class="circle-center">میز بازی</div>
+        <!-- ورودی بازیکنان به صورت دایره‌ای اضافه می‌شود -->
+      </div>
+      <button class="btn" id="nextToSettings">بعدی: تنظیمات بازی</button>
+    </div>
+
+    <!-- صفحه تنظیمات بازی -->
+    <div id="settingsScreen" class="screen">
+      <h1>⚙️ تنظیمات بازی</h1>
+      <div class="settings-container">
+        <div class="setting-item">
+          <label class="setting-label">⏱️ زمان هر تیم (دقیقه):</label>
+          <input type="number" class="time-input" id="teamTime" value="4" min="1" max="10">
+        </div>
+        
+        <div class="setting-item">
+          <label class="setting-label">⏭️ زمان انتظار برای رد کردن (ثانیه):</label>
+          <input type="number" class="time-input" id="skipTime" value="10" min="0" max="30">
+        </div>
+        
+        <div class="setting-item">
+          <label class="setting-label">🎯 سطح دشواری:</label>
+          <div class="difficulty-buttons">
+            <div class="difficulty-btn selected" data-difficulty="1">آسان ⭐</div>
+            <div class="difficulty-btn" data-difficulty="2">متوسط ⭐⭐</div>
+            <div class="difficulty-btn" data-difficulty="3">سخت ⭐⭐⭐</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn" id="startGame">شروع بازی!</button>
+    </div>
+
+    <!-- صفحه بازی -->
+    <div id="gameScreen" class="screen">
+      <div class="timers" id="timers">
+        <!-- تایمر تیم‌ها به صورت پویا اضافه می‌شود -->
+      </div>
+
+      <div class="game-area">
+        <div class="current-player" id="currentPlayer">برای شروع بازی کلیک کنید!</div>
+        <div class="current-word" id="currentWord">🎮</div>
+        <div class="word-difficulty" id="wordDifficulty"></div>
+        <div class="game-controls" id="gameControls" style="display: none;">
+          <button class="btn word-btn" id="correctWord">حدس زدیم ✓</button>
+          <button class="btn skip-btn" id="skipWord">رد کردن ❯</button>
+        </div>
+      </div>
+
+      <button class="btn" id="startGameBtn">شروع بازی</button>
+    </div>
+
+    <!-- صفحه برنده -->
+    <div id="winnerScreen" class="screen">
+      <div class="winner" id="winnerText">🏆 تیم برنده شد!</div>
+      <button class="btn" id="playAgain">بازی دوباره</button>
+    </div>
+  </div>
+
+    <script>
+        // Game data with difficulty levels
+        const wordCategories = {
+            animals: {
+                1: ['شیر', 'فیل', 'سگ', 'گربه', 'اسب', 'گاو', 'خروس', 'خرگوش'],
+                2: ['دلفین', 'کانگورو', 'زرافه', 'پنگوئن', 'اختاپوس', 'کوآلا', 'زبر', 'عقاب'],
+                3: ['آکسولوتل', 'تارانتولا', 'کامودو', 'نارول', 'فنک', 'تپیر', 'کیوی', 'آیه آیه']
+            },
+            celebrities: {
+                1: ['لئوناردو دی کاپریو', 'تیلور سوئیفت', 'راک جانسون', 'تام هنکس', 'ویل اسمیت'],
+                2: ['کریستوفر نولان', 'مارتین اسکورسیزی', 'کوئنتین تارانتینو', 'اسپیلبرگ', 'ریدلی اسکات'],
+                3: ['فاروق شیخ', 'انوشیروان ارجمند', 'حمید فرخ نژاد', 'عزت الله انتظامی', 'اکبر عبدی']
+            },
+            objects: {
+                1: ['گوشی', 'دوچرخه', 'گیتار', 'دوربین', 'چتر', 'عینک آفتابی', 'کوله پشتی'],
+                2: ['میکروسکوپ', 'تلسکوپ', 'استتوسکوپ', 'اسیلوسکوپ', 'کرونومتر', 'آلتیمتر'],
+                3: ['طیف سنج', 'کالریمتر', 'ولت آمپر متر', 'اسپکتروفتومتر', 'گالوانومتر', 'سیسموگراف']
+            },
+            movies: {
+                1: ['تایتانیک', 'آواتار', 'ماتریکس', 'جنگ ستارگان', 'شیر شاه', 'یخ زده', 'مرد عنکبوتی'],
+                2: ['شب تاریک', 'راهب', 'دشت وحش', 'سیاره میمون ها', 'ماموریت غیرممکن', 'محافظان کهکشان'],
+                3: ['سرزمین گمشده', 'شهر گناهکاران', 'بلید رانر', 'متروپولیس', 'آغازگر', 'ملکوت']
+            },
+            food: {
+                1: ['پیتزا', 'همبرگر', 'سوشی', 'شکلات', 'بستنی', 'پاستا', 'سالاد', 'قهوه'],
+                2: ['پاد تی', 'ماکارون', 'تیرامیسو', 'کروسان', 'ریزوتو', 'راتاتویی', 'گاسپاچو'],
+                3: ['مولکولار گاسترونومی', 'فوگت گراس', 'کاویار بلوگا', 'ترافل سیاه', 'اسکارگو', 'بویابس']
+            },
+            countries: {
+                1: ['آمریکا', 'ژاپن', 'فرانسه', 'برزیل', 'استرالیا', 'آلمان', 'ایتالیا', 'کانادا'],
+                2: ['مادگاسکار', 'نیوزیلند', 'نروژ', 'فنلاند', 'سنگاپور', 'مالت', 'آیسلند'],
+                3: ['سیشل', 'توالو', 'نائورو', 'سن مارینو', 'موناکو', 'لیختن اشتاین', 'آندورا']
+            }
+        };
+
+        // Game state
+        let selectedCategories = [];
+        let players = [];
+        let teams = [];
+        let currentPlayerIndex = 0;
+        let currentWord = '';
+        let currentWordDifficulty = 1;
+        let gameWords = [];
+        let usedWords = [];
+        let gameActive = false;
+        let teamTimers = [];
+        let timerIntervals = [];
+        let skipButtonTimeout;
+        let skipCountdownInterval = null;
+        
+        // Game settings
+        let teamTimeLimit = 4 * 60 * 1000; // 4 minutes in milliseconds
+        let skipWaitTime = 10; // 10 seconds
+        let difficultyLevel = 1;
+        
+        // Team colors
+        const teamColors = ['#D62226', '#4542B9', '#01AA31', '#F5C603', '#411271'];
+        const teamColorNames = ['قرمز', 'آبی', 'سبز', 'زرد', 'بنفش'];
+        
+        // Persistent game data
+        let savedCategories = [];
+        let savedPlayerNames = [];
+
+        // DOM elements
+        const screens = {
+            category: document.getElementById('categoryScreen'),
+            player: document.getElementById('playerScreen'),
+            settings: document.getElementById('settingsScreen'),
+            game: document.getElementById('gameScreen'),
+            winner: document.getElementById('winnerScreen')
+        };
+
+        // Initialize game
+        function init() {
+            setupCategorySelection();
+            setupPlayerSetup();
+            setupGameSettings();
+            setupGameControls();
+        }
+
+        function setupCategorySelection() {
+            const categories = document.querySelectorAll('.category');
+            const nextBtn = document.getElementById('nextToPlayers');
+
+            categories.forEach(category => {
+                category.addEventListener('click', () => {
+                    const categoryName = category.dataset.category;
+                    
+                    if (selectedCategories.includes(categoryName)) {
+                        selectedCategories = selectedCategories.filter(cat => cat !== categoryName);
+                        category.classList.remove('selected');
+                    } else {
+                        selectedCategories.push(categoryName);
+                        category.classList.add('selected');
+                    }
+
+                    nextBtn.disabled = selectedCategories.length === 0;
+                });
+            });
+
+            nextBtn.addEventListener('click', () => {
+                // Save selected categories
+                savedCategories = [...selectedCategories];
+                showScreen('player');
+                generatePlayerInputs();
+            });
+        }
+
+        function setupPlayerSetup() {
+            const slider = document.getElementById('playerSlider');
+            const playerCountSpan = document.getElementById('playerCount');
+            const nextBtn = document.getElementById('nextToSettings');
+
+            slider.addEventListener('input', (e) => {
+                const count = parseInt(e.target.value);
+                playerCountSpan.textContent = count;
+                generatePlayerInputs();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const inputs = document.querySelectorAll('.player-input');
+                players = [];
+                savedPlayerNames = []; // Save player names
+                
+                inputs.forEach((input, index) => {
+                    const name = input.value.trim() || `بازیکن ${index + 1}`;
+                    savedPlayerNames.push(name); // Store for next game
+                    players.push({
+                        name: name,
+                        id: index
+                    });
+                });
+
+                showScreen('settings');
+            });
+        }
+
+        function generatePlayerInputs() {
+            const container = document.getElementById('circleContainer');
+            const count = parseInt(document.getElementById('playerSlider').value);
+            
+            // Remove existing inputs but keep the center text
+            const existingInputs = container.querySelectorAll('.player-input');
+            existingInputs.forEach(input => input.remove());
+            
+            const radius = 180; // Distance from center
+            const centerX = 200; // Half of container width
+            const centerY = 200; // Half of container height
+            
+            for (let i = 0; i < count; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'player-input';
+                
+                // Calculate position on circle
+                const angle = (i * 2 * Math.PI) / count - Math.PI / 2; // Start from top
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                
+                // Position the input
+                input.style.left = `${x}px`;
+                input.style.top = `${y}px`;
+                
+                // Determine team assignment and color
+                const numTeams = count / 2;
+                let teamId, teamColor, teamColorName;
+                
+                if (i < numTeams) {
+                    // First half of players
+                    teamId = i;
+                } else {
+                    // Second half of players
+                    teamId = i - numTeams;
+                }
+                
+                teamColor = teamColors[teamId % teamColors.length];
+                teamColorName = teamColorNames[teamId % teamColorNames.length];
+                
+                // Set border color and placeholder based on team
+                input.style.borderColor = teamColor;
+                input.placeholder = `${teamColorName}`;
+                
+                // Pre-fill with saved names if available
+                if (savedPlayerNames[i]) {
+                    input.value = savedPlayerNames[i];
+                }
+                
+                container.appendChild(input);
+            }
+        }
+
+        function setupGameSettings() {
+            const teamTimeInput = document.getElementById('teamTime');
+            const skipTimeInput = document.getElementById('skipTime');
+            const difficultyBtns = document.querySelectorAll('.difficulty-btn');
+            const startBtn = document.getElementById('startGame');
+
+            // Team time setting
+            teamTimeInput.addEventListener('change', (e) => {
+                teamTimeLimit = parseInt(e.target.value) * 60 * 1000; // Convert to milliseconds
+            });
+
+            // Skip time setting
+            skipTimeInput.addEventListener('change', (e) => {
+                skipWaitTime = parseInt(e.target.value);
+            });
+
+            // Difficulty selection
+            difficultyBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    difficultyBtns.forEach(b => b.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    difficultyLevel = parseInt(btn.dataset.difficulty);
+                });
+            });
+
+            startBtn.addEventListener('click', () => {
+                setupTeams();
+                setupGameWords();
+                showScreen('game');
+                initializeGame();
+            });
+        }
+
+        function setupTeams() {
+            teams = [];
+            teamTimers = [];
+            
+            const numTeams = players.length / 2;
+            
+            // Create teams with the pairing pattern: p1 with p4, p2 with p5, p3 with p6, etc.
+            for (let teamId = 0; teamId < numTeams; teamId++) {
+                const player1Index = teamId;
+                const player2Index = teamId + numTeams;
+                
+                const team = {
+                    players: [players[player1Index], players[player2Index]],
+                    timeLeft: teamTimeLimit,
+                    eliminated: false,
+                    id: teamId,
+                    color: teamColors[teamId % teamColors.length],
+                    colorName: teamColorNames[teamId % teamColorNames.length]
+                };
+                teams.push(team);
+                teamTimers.push(teamTimeLimit);
+            }
+
+            generateTimerBars();
+        }
+
+        function generateTimerBars() {
+            const container = document.getElementById('timers');
+            container.innerHTML = '';
+
+            teams.forEach((team, index) => {
+                const playerNames = team.players.map(p => p.name).join(' و ');
+                const timerDiv = document.createElement('div');
+                timerDiv.className = 'team-timer';
+                timerDiv.innerHTML = `
+                    <div class="team-name" id="teamName${index}" style="color: ${team.color};">
+                        تیم ${index + 1} (${team.colorName}): ${playerNames}
+                    </div>
+                    <div class="timer-bar">
+                        <div class="timer-fill" id="timerFill${index}" style="background: ${team.color};"></div>
+                    </div>
+                `;
+                container.appendChild(timerDiv);
+            });
+        }
+
+        function setupGameWords() {
+            gameWords = [];
+            selectedCategories.forEach(category => {
+                // Add words from selected difficulty level and below
+                for (let diff = 1; diff <= difficultyLevel; diff++) {
+                    if (wordCategories[category][diff]) {
+                        const categoryWords = wordCategories[category][diff].map(word => ({
+                            word: word,
+                            difficulty: diff,
+                            category: category
+                        }));
+                        gameWords = gameWords.concat(categoryWords);
+                    }
+                }
+            });
+            
+            // Shuffle the words
+            gameWords = gameWords.sort(() => Math.random() - 0.5);
+            usedWords = [];
+        }
+
+        function setupGameControls() {
+            const startGameBtn = document.getElementById('startGameBtn');
+            const correctBtn = document.getElementById('correctWord');
+            const skipBtn = document.getElementById('skipWord');
+            const playAgainBtn = document.getElementById('playAgain');
+
+            startGameBtn.addEventListener('click', startGame);
+            correctBtn.addEventListener('click', () => handleWordResult('correct'));
+            skipBtn.addEventListener('click', () => handleWordResult('skip'));
+            playAgainBtn.addEventListener('click', resetGame);
+        }
+
+        function initializeGame() {
+            updateCurrentPlayer();
+            document.getElementById('currentWord').textContent = '🎮';
+            document.getElementById('wordDifficulty').textContent = '';
+            document.getElementById('gameControls').style.display = 'none';
+            document.getElementById('startGameBtn').style.display = 'block';
+        }
+
+        function startGame() {
+            gameActive = true;
+            document.getElementById('startGameBtn').style.display = 'none';
+            document.getElementById('gameControls').style.display = 'flex';
+            
+            startCurrentTeamTimer();
+            showNextWord();
+        }
+
+        function startTimers() {
+            timerIntervals.forEach(interval => clearInterval(interval));
+            timerIntervals = [];
+            startCurrentTeamTimer();
+        }
+
+        function startCurrentTeamTimer() {
+            // Clear any existing timer
+            timerIntervals.forEach(interval => clearInterval(interval));
+            timerIntervals = [];
+
+            const currentTeam = getCurrentTeam();
+            const teamIndex = teams.findIndex(team => team === currentTeam);
+            
+            if (!currentTeam.eliminated) {
+                const interval = setInterval(() => {
+                    teamTimers[teamIndex] -= 100;
+                    updateTimerBar(teamIndex);
+
+                    if (teamTimers[teamIndex] <= 0) {
+                        eliminateTeam(teamIndex);
+                    }
+                }, 100);
+                timerIntervals.push(interval);
+            }
+        }
+
+        function updateTimerBar(teamIndex) {
+            const fill = document.getElementById(`timerFill${teamIndex}`);
+            const percentage = (teamTimers[teamIndex] / teamTimeLimit) * 100;
+            fill.style.width = `${Math.max(0, percentage)}%`;
+        }
+
+        function eliminateTeam(teamIndex) {
+            teams[teamIndex].eliminated = true;
+            clearInterval(timerIntervals[teamIndex]);
+            
+            const teamName = document.getElementById(`teamName${teamIndex}`);
+            teamName.classList.add('eliminated');
+            
+            const activeteams = teams.filter(team => !team.eliminated);
+            if (activeteams.length === 1) {
+                endGame(activeteams[0]);
+            } else if (activeteams.length === 0) {
+                endGame(null);
+            }
+        }
+
+        function showNextWord() {
+            if (gameWords.length > 0 && usedWords.length < gameWords.length) {
+                let wordObj;
+                do {
+                    wordObj = gameWords[Math.floor(Math.random() * gameWords.length)];
+                } while (usedWords.some(used => used.word === wordObj.word));
+                
+                currentWord = wordObj.word;
+                currentWordDifficulty = wordObj.difficulty;
+                usedWords.push(wordObj);
+                
+                document.getElementById('currentWord').textContent = wordObj.word;
+                
+                // Show difficulty stars
+                const difficultyText = '⭐'.repeat(wordObj.difficulty);
+                document.getElementById('wordDifficulty').textContent = `سطح دشواری: ${difficultyText}`;
+                
+                // Disable skip button for specified time
+                if (skipWaitTime > 0) {
+                    const skipBtn = document.getElementById('skipWord');
+                    skipBtn.disabled = true;
+                    skipBtn.textContent = `رد کردن (${skipWaitTime})`;
+                    
+                    let countdown = skipWaitTime;
+                    skipCountdownInterval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            skipBtn.textContent = `رد کردن (${countdown})`;
+                        } else {
+                            skipBtn.disabled = false;
+                            skipBtn.textContent = 'رد کردن ❯';
+                            clearInterval(skipCountdownInterval);
+                            skipCountdownInterval = null;
+                        }
+                    }, 1000);
+                }
+                
+            } else {
+                // Reset used words if we've used them all
+                usedWords = [];
+                showNextWord();
+            }
+        }
+
+        function handleWordResult(action) {
+            if (!gameActive) return;
+            if (skipCountdownInterval) {
+                clearInterval(skipCountdownInterval);
+                skipCountdownInterval = null;
+            }
+            if (action === 'correct') {
+                // Got it: change team and show next word
+                nextPlayer();
+                showNextWord();
+            } else if (action === 'skip') {
+                // Skip: just show next word, same team
+                showNextWord();
+            }
+        }
+
+        function getCurrentTeam() {
+            // Find which team the current player belongs to
+            for (let i = 0; i < teams.length; i++) {
+                if (teams[i].players.some(player => player.id === currentPlayerIndex)) {
+                    return teams[i];
+                }
+            }
+            return teams[0]; // fallback
+        }
+
+        function nextPlayer() {
+            // Stop current team's timer
+            timerIntervals.forEach(interval => clearInterval(interval));
+            timerIntervals = [];
+            
+            // Move to next explainer in circular order, skipping eliminated teams
+            do {
+                currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+            } while (getCurrentTeam().eliminated);
+            
+            updateCurrentPlayer();
+            
+            // Start the new team's timer
+            startCurrentTeamTimer();
+        }
+
+        function updateCurrentPlayer() {
+            const currentPlayer = players[currentPlayerIndex];
+            const currentTeam = getCurrentTeam();
+            
+            // Find the teammate (the other player in the same team)
+            const teammate = currentTeam.players.find(player => player.id !== currentPlayerIndex);
+            
+            // Update game area border color to match current team
+            const gameArea = document.querySelector('.game-area');
+            gameArea.style.borderColor = currentTeam.color;
+            
+            document.getElementById('currentPlayer').innerHTML = 
+                `<span style="color: ${currentTeam.color}; font-weight: bold;">${currentPlayer.name}`;
+        }
+
+        function endGame(winningTeam) {
+            gameActive = false;
+            timerIntervals.forEach(interval => clearInterval(interval));
+            
+            const winnerText = document.getElementById('winnerText');
+            if (winningTeam) {
+                const playerNames = winningTeam.players.map(p => p.name).join(' و ');
+                winnerText.innerHTML = `🏆 <span style="color: ${winningTeam.color};">تیم ${winningTeam.id + 1} (${winningTeam.colorName})</span> برنده شد! 🏆<br><small>${playerNames}</small>`;
+            } else {
+                winnerText.textContent = '⏰ وقت تمام شد! بازنده‌ای نیست!';
+            }
+            
+            showScreen('winner');
+        }
+
+        function resetGame() {
+            // Don't reset selectedCategories and savedPlayerNames - keep them for next game
+            players = [];
+            teams = [];
+            currentPlayerIndex = 0;
+            gameActive = false;
+            teamTimers = [];
+            timerIntervals.forEach(interval => clearInterval(interval));
+            timerIntervals = [];
+            
+            // Restore previously selected categories
+            selectedCategories = [...savedCategories];
+            
+            // Re-select the category buttons
+            document.querySelectorAll('.category').forEach(cat => {
+                cat.classList.remove('selected');
+                if (savedCategories.includes(cat.dataset.category)) {
+                    cat.classList.add('selected');
+                }
+            });
+            
+            // Enable next button if categories were selected
+            const nextBtn = document.getElementById('nextToPlayers');
+            nextBtn.disabled = savedCategories.length === 0;
+            
+            showScreen('category');
+        }
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => screen.classList.remove('active'));
+            screens[screenName].classList.add('active');
+        }
+
+        // Initialize the game when page loads
+        init();
+    </script>
+</body>
+</html>
